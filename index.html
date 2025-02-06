@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter & Number Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background-color: #ffebcd;
+            transition: background-color 0.5s ease;
+        }
+
+        .game-container {
+            margin-top: 50px;
+        }
+
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .choice {
+            font-size: 40px;
+            padding: 20px;
+            border: 3px solid #000;
+            cursor: pointer;
+            background-color: #ffcc00;
+            border-radius: 10px;
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .choice:hover {
+            background-color: #ff9900;
+            transform: scale(1.1);
+        }
+
+        #target {
+            font-size: 50px;
+            color: #ff4500;
+        }
+
+        .feedback {
+            font-size: 40px;
+            font-weight: bold;
+            margin-top: 20px;
+            height: 50px;
+        }
+
+        .selected-letter {
+            font-size: 80px;
+            color: #0000ff;
+            margin-top: 20px;
+            height: 100px;
+            font-weight: bold;
+        }
+
+        .emoji-display {
+            font-size: 100px;
+            margin-top: 20px;
+            height: 120px;
+        }
+
+        .animate-correct {
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="color: #ff4500; font-size: 50px;">Pick the Correct Letter or Number!</h1>
+    <div class="game-container">
+        <h2 id="target"></h2>
+        <div class="choices" id="choices"></div>
+        <div id="selectedLetter" class="selected-letter"></div>
+        <div id="emojiDisplay" class="emoji-display"></div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <script>
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        const numbers = "0123456789".split("");
+        const allChars = [...letters, ...numbers];
+        let correctChoice = "";
+        const emojis = {
+            "A": "🍎", "B": "⚽", "C": "🐱", "D": "🐶", "E": "🐘",
+            "F": "🐟", "G": "🍇", "H": "🎩", "I": "🍦", "J": "🍹",
+            "K": "🪁", "L": "🦁", "M": "🐵", "N": "🪹", "O": "🍊",
+            "P": "🦜", "Q": "👑", "R": "🐰", "S": "☀️", "T": "🐯",
+            "U": "☂️", "V": "🎻", "W": "⌚", "X": "🎵", "Y": "⛵",
+            "Z": "🦓",
+            "0": "👌", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖",
+            "5": "🖐️", "6": "🤚", "7": "👆", "8": "👍", "9": "🤙"
+        };
+
+        function newGame() {
+            const target = document.getElementById("target");
+            const choicesDiv = document.getElementById("choices");
+            const feedbackDiv = document.getElementById("feedback");
+            const selectedLetterDiv = document.getElementById("selectedLetter");
+            const emojiDisplay = document.getElementById("emojiDisplay");
+            document.body.style.backgroundColor = "#ffebcd";
+            choicesDiv.innerHTML = "";
+            feedbackDiv.innerHTML = "";
+            selectedLetterDiv.innerHTML = "";
+            emojiDisplay.innerHTML = "";
+            feedbackDiv.classList.remove("animate-correct");
+
+            correctChoice = allChars[Math.floor(Math.random() * allChars.length)];
+            target.textContent = `Find: ${correctChoice}`;
+
+            let options = [correctChoice];
+            while (options.length < 4) {
+                let randomChoice = allChars[Math.floor(Math.random() * allChars.length)];
+                if (!options.includes(randomChoice)) {
+                    options.push(randomChoice);
+                }
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            options.forEach(choice => {
+                let button = document.createElement("button");
+                button.classList.add("choice");
+                button.textContent = choice;
+                button.onclick = () => checkChoice(choice, button);
+                choicesDiv.appendChild(button);
+            });
+        }
+
+        function checkChoice(choice, button) {
+            const feedbackDiv = document.getElementById("feedback");
+            const selectedLetterDiv = document.getElementById("selectedLetter");
+            const emojiDisplay = document.getElementById("emojiDisplay");
+            selectedLetterDiv.textContent = choice;
+
+            if (emojis[choice]) {
+                emojiDisplay.innerHTML = emojis[choice];
+            }
+
+            if (choice === correctChoice) {
+                feedbackDiv.innerHTML = "🎉 Correct! 🎉";
+                feedbackDiv.style.color = "green";
+                feedbackDiv.classList.add("animate-correct");
+                button.style.backgroundColor = "#00cc00";
+                button.style.color = "white";
+                document.body.style.backgroundColor = "#8fce00";
+                setTimeout(newGame, 2000);
+            } else {
+                feedbackDiv.innerHTML = "❌ Try again! ❌";
+                feedbackDiv.style.color = "red";
+                document.body.style.backgroundColor = "#ff4d4d";
+                setTimeout(() => { document.body.style.backgroundColor = "#ffebcd"; }, 500);
+            }
+        }
+
+        newGame();
+    </script>
+</body>
+
+</html>
